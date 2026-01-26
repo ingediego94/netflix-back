@@ -11,4 +11,8 @@ public class Payment
     public DateTime PaymentDate { get; set; }
     public Status Status { get; set; }
     public string TransactionReference { get; set; }
+    
+    // Relations:
+    public Subscription Subscription { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
 }

@@ -14,4 +14,7 @@ public class Subscription
     // Relation:
     public Plan Plan { get; set; }
     public User User { get; set; }
+    
+    // Inverse relation:
+    public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

@@ -6,7 +6,7 @@ public class Plan
     public string PlanName { get; set; }
     public double Price { get; set; }
     public int MaxScreens { get; set; }
-    public string VideoQuality { get; set; }
+    public int VideoQuality { get; set; }
     public bool IsActive { get; set; }
     
     // Inverse Relation:

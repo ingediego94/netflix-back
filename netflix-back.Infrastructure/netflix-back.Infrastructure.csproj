@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\netflix-back.Domain\netflix-back.Domain.csproj" />
+    <ProjectReference Include="..\netflix-back.Application\netflix-back.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

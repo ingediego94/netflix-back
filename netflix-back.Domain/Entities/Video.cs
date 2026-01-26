@@ -13,8 +13,8 @@ public class Video
     // Relations 1:1
     public Content Content { get; set; }
     public Episode Episode { get; set; }
-
+    
     
     // Inverse Relation:
-    public ICollection<Video> Videos { get; set; } = new List<Video>();
+    // public ICollection<Video> Videos { get; set; } = new List<Video>();
 }
