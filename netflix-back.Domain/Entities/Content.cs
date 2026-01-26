@@ -13,7 +13,7 @@ public class Content
     
     
     // Relations:
-    public Genre Genres { get; set; }
+    public Genre Genre { get; set; }
     public Video Video { get; set; }
     
     

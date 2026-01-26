@@ -21,5 +21,7 @@ public class User
     
     
     // Inverse Relation:
-    public ICollection<Video> Photos { get; set; } = new List<Video>();
+    public ICollection<History> Histories { get; set; } = new List<History>();
+    public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+    
 }

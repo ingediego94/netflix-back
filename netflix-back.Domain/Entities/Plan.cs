@@ -8,4 +8,7 @@ public class Plan
     public int MaxScreens { get; set; }
     public string VideoQuality { get; set; }
     public bool IsActive { get; set; }
+    
+    // Inverse Relation:
+    public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
 }

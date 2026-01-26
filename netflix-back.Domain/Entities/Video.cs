@@ -10,9 +10,11 @@ public class Video
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     
+    // Relations 1:1
+    public Content Content { get; set; }
+    public Episode Episode { get; set; }
+
     
-    // Inverse Relations:
-    public ICollection<Episode> Episodes { get; set; } = new List<Episode>();
-    public ICollection<Content> Contents { get; set; } = new List<Content>();
-    
+    // Inverse Relation:
+    public ICollection<Video> Videos { get; set; } = new List<Video>();
 }

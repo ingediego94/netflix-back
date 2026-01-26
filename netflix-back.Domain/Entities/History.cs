@@ -9,5 +9,6 @@ public class History
     public DateTime CreatedAt { get; set; }
     
     // Relations:
-    
+    public User User { get; set; }
+    public Video Video { get; set; }
 }
