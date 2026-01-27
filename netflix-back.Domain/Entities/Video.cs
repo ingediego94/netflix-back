@@ -4,7 +4,9 @@ public class Video
 {
     public int Id { get; set; }
     public string? UrlPicture {get; set;}
+    public string? PublicIdPicture { get; set; } // Nuevo: Para borrar la imagen
     public string UrlVideo { get; set; } = string.Empty;
+    public string PublicIdVideo { get; set; } = string.Empty; // Nuevo: Para borrar el video
     public int Duration { get; set; }
     public bool Active { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -13,8 +15,5 @@ public class Video
     // Relations 1:1
     public Content Content { get; set; }
     public Episode Episode { get; set; }
-    
-    
-    // Inverse Relation:
-    // public ICollection<Video> Videos { get; set; } = new List<Video>();
+
 }

@@ -30,6 +30,12 @@ public class VideoRepository : IVideoRepository
         await _context.SaveChangesAsync();
         return video;
     }
+    
+    // Get by Id:
+    public async Task<Video?> GetByIdAsync(int id)
+    {
+        return await _context.Videos.FirstOrDefaultAsync(v => v.Id == id);
+    }
 
     
     // Delete:

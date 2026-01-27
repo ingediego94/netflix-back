@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using netflix_back.Application.DTOs;
 using netflix_back.Application.Interfaces;
 using netflix_back.Domain.Entities;
@@ -36,57 +37,32 @@ public class VideoService : IVideoService
     // Add Video:
     public async Task<VideoResponseDto?> AddVideoAsync(VideoAddDto videoDto)
     {
-        if (videoDto == null)
-            throw new ArgumentNullException(nameof(videoDto), "El DTO del video no puede ser nulo.");
-        
-        // 1. Upload video to Cloudinary.
-        var videoUploadDto = new UploadVideoDto
-        {
-            Video = videoDto.VideoFile,
-            UserId = null
-        };
-        
-        var urlVideo = await _cloudinaryService.UploadVideoAsync(videoUploadDto);
+        // 1. Subir Video (Obtenemos duración y PublicId automáticamente)
+        var videoRes = await _cloudinaryService.UploadAsync(new UploadVideoDto { Video = videoDto.VideoFile });
+        if (videoRes == null) throw new Exception("Error al subir video.");
 
-        if (string.IsNullOrEmpty(urlVideo))
-        {
-            throw new InvalidOperationException("No se pudo subir la imagen a Cloudinary."); 
-        }
-
-        // 2. Upload picture (Thumbnail) to Cloudinary if exists.
-        string? urlPicture = null;
+        // 2. Subir Foto opcional
+        CloudinaryUploadResult? photoRes = null;
         if (videoDto.PhotoFile != null)
         {
-            var photoUploadDto = new UploadVideoDto
-            {
-                Video = videoDto.PhotoFile,
-                UserId = null
-            };
-            urlPicture = await _cloudinaryService.UploadVideoAsync(photoUploadDto);
+            photoRes = await _cloudinaryService.UploadAsync(new UploadVideoDto { Video = videoDto.PhotoFile });
         }
-        
-        
-        // 3. Creating the entity and save on the database according with DTO and Cloudinary
+
+        // 3. Guardar en DB
         var newVideo = new Video
         {
-            UrlPicture = urlPicture,         // MODIFICADO: Viene de la subida opcional de imagen
-            UrlVideo = urlVideo,             // MODIFICADO: Viene de la subida de video
-            Duration = videoDto.Duration,    // MODIFICADO: Viene directamente del DTO de entrada
-            Active = true, 
+            UrlVideo = videoRes.Url!,
+            PublicIdVideo = videoRes.PublicId!,
+            Duration = videoRes.Duration, // MODIFICADO: Sin librerías externas
+            UrlPicture = photoRes?.Url,
+            PublicIdPicture = photoRes?.PublicId,
+            Active = true,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
 
-        var addedVideo = await _videoRepository.AddAsync(newVideo);
-
-        if (addedVideo == null) 
-        {
-            // Optional: If the addition fails after uploading, it is recommended
-            // to implement a logic to delete the picture of Cloudinary (rollback).
-            return null;
-        }
-
-        return _mapper.Map<VideoResponseDto>(addedVideo);
+        var added = await _videoRepository.AddAsync(newVideo);
+        return _mapper.Map<VideoResponseDto>(added);
     }
 
     
@@ -102,9 +78,18 @@ public class VideoService : IVideoService
     // Remove video:
     public async Task<bool> RemoveVideoAsync(int id)
     {
-        // Logic to delete on DB
-        var removed = await _videoRepository.RemoveAsync(id);
-        // Logic to delete on Cloudinary (if you want)
-        return removed;
+        // 1. Obtener datos del video de la DB antes de borrar
+        var video = await _videoRepository.GetByIdAsync(id); // Asegúrate de tener este método en tu Repo
+        if (video == null) return false;
+
+        // 2. Borrar de Cloudinary
+        await _cloudinaryService.DeleteFileAsync(video.PublicIdVideo, "video");
+        if (!string.IsNullOrEmpty(video.PublicIdPicture))
+        {
+            await _cloudinaryService.DeleteFileAsync(video.PublicIdPicture, "image");
+        }
+
+        // 3. Borrar de DB
+        return await _videoRepository.RemoveAsync(id);
     }
 }

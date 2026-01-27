@@ -2,8 +2,13 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using netflix_back.Application.Interfaces;
+using netflix_back.Application.Services;
 using netflix_back.Domain.Entities;
+using netflix_back.Domain.Interfaces;
 using netflix_back.Infrastructure.Extensions;
+using netflix_back.Infrastructure.Repositories;
+using netflix_back.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,10 +31,10 @@ builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddScoped<IGeneralRepository<User>, UserRepository>();
 // builder.Services.AddScoped<IUserService, UserService>();
 //
-// // Photos
-// builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
-// builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
-// builder.Services.AddScoped<IPhotoService, PhotoService>();
+// Videos:
+builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<IVideoService, VideoService>();
 
 //
 // // Course:

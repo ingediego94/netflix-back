@@ -20,7 +20,4 @@ public class VideoAddDto
     public IFormFile VideoFile { get; set; }
     public IFormFile? PhotoFile { get; set; }
     
-    [Required(ErrorMessage = "La duración es requerida.")]
-    public int Duration { get; set; }
-    // public int? UserId { get; set; }        // VALIDAR ¡
 }
