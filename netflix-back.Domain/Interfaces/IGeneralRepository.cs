@@ -1,6 +1,6 @@
 namespace netflix_back.Domain.Interfaces;
 
-public interface GeneralRepository<T>
+public interface IGeneralRepository<T>
 {
     Task<IEnumerable<T>> GetAllAsync();
     Task<T?> GetByIdAsync(int id);
