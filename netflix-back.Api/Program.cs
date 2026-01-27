@@ -15,8 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Database dependency injection:
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// // Auth
-// builder.Services.AddScoped<IAuthService, AuthService>();
+// Auth
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // AutoMaper:
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -28,29 +28,19 @@ builder.Services.AddEndpointsApiExplorer();
 // Repositories and Services
 
 // User:
-// builder.Services.AddScoped<IGeneralRepository<User>, UserRepository>();
-// builder.Services.AddScoped<IUserService, UserService>();
-//
+builder.Services.AddScoped<IGeneralRepository<User>, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 // Videos:
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IVideoService, VideoService>();
 
-//
-// // Course:
-// builder.Services.AddScoped<IGeneralRepository<Course>, CourseRepository>();
-// builder.Services.AddScoped<ICourseService, CourseService>();
-//
-// // Lesson:
-// builder.Services.AddScoped<IGeneralRepository<Lesson>, LessonRepository>();
-// builder.Services.AddScoped<ILessonService, LessonService>();
 
 
 // ----------------------------------------------------------------
-// JWT
-// var key = builder.Configuration["Jwt:Key"];
-// var issuer =  builder.Configuration["Jwt:Issuer"];
 
+// JWT
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,7 +66,7 @@ builder.Services.AddAuthentication(options =>
 // Button of AUTHORIZE
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "mySystem API", Version = "v1" });
+    c.SwaggerDoc("v1", new() { Title = "netflix  API", Version = "v1" });
 
     // Set autorización with JWT
     c.AddSecurityDefinition("Bearer", new()

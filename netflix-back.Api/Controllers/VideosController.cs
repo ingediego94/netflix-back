@@ -6,7 +6,7 @@ using netflix_back.Application.Interfaces;
 namespace netflix_back.Api.Controllers;
 
 [ApiController]
-[Route("api/videos")]
+[Route("api/[controller]")]
 public class VideosController : ControllerBase
 {
     private readonly IVideoService _videoService;
@@ -17,8 +17,8 @@ public class VideosController : ControllerBase
     }
 
     // [Authorize(Roles = "Admin, User")]
-    [HttpGet("getAll")]
-    public async Task<ActionResult<List<VideoResponseDto>>> GetAll()
+    [HttpGet("getAllVideos")]
+    public async Task<ActionResult<List<VideoResponseDto>>> GetAllVideos()
     {
         var videos = await _videoService.GetAllVideosAsync();
         return Ok(videos ?? new List<VideoResponseDto>());
@@ -26,15 +26,15 @@ public class VideosController : ControllerBase
 
     
     // [Authorize(Roles = "Admin")]
-    [HttpPost("create")]
-    public async Task<IActionResult> Create([FromForm] VideoAddDto videoDto)
+    [HttpPost("addVideo")]
+    public async Task<IActionResult> AddVideo([FromForm] VideoAddDto videoDto)
     {
         if (!ModelState.IsValid || videoDto.VideoFile == null) return BadRequest(ModelState);
 
         try
         {
             var result = await _videoService.AddVideoAsync(videoDto);
-            return CreatedAtAction(nameof(GetAll), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetAllVideos), new { id = result.Id }, result);
         }
         catch (Exception ex)
         {
@@ -44,8 +44,8 @@ public class VideosController : ControllerBase
 
     
     // [Authorize(Roles = "Admin")]
-    [HttpDelete("delete/{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("deleteVideo/{id:int}")]
+    public async Task<IActionResult> DeleteVideo(int id)
     {
         var success = await _videoService.RemoveVideoAsync(id);
         if (!success) return NotFound(new { message = "Video no encontrado." });
