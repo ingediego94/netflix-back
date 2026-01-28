@@ -36,6 +36,10 @@ builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IVideoService, VideoService>();
 
+// History:
+builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
+builder.Services.AddScoped<IHistoryService, HistoryService>();
+
 
 
 // ----------------------------------------------------------------
@@ -114,6 +118,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// 1. Siempre habilitar CORS al inicio para evitar "Failed to fetch"
+app.UseCors("DevCorsPolicy");
+
 // -------------------------------------------------------------------
 //deploy
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
@@ -121,20 +128,20 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Catalog API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Netflix API v1");
         c.RoutePrefix = string.Empty;
     });
 }
 
 // -------------------------------------------------------------------
 // // Middlewares
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
-    app.UseCors("DevCorsPolicy");
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+//
+//     app.UseCors("DevCorsPolicy");
+// }
 
 app.UseHttpsRedirection();
 
