@@ -17,7 +17,6 @@ public class MapProfile : Profile
         CreateMap<UserAuthResponseDto, User>();
         CreateMap<User, UserAuthResponseDto>();
         
-        
         // User:
         CreateMap<UserCreateDto, User>();
         CreateMap<UserUpdateDto, User>();
@@ -26,5 +25,12 @@ public class MapProfile : Profile
         // Mapping of Video:
         CreateMap<Video, VideoResponseDto>();
         CreateMap<VideoResponseDto, Video>();
+        
+        // Mapping of History:
+        CreateMap<HistoryCreateDto, History>();
+        CreateMap<HistoryUpdateDto, History>();
+        CreateMap<History, HistoryResponseDto>();
+        
+        
     }
 }
