@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using netflix_back.Api.Middlewares;
 using netflix_back.Application.Interfaces;
 using netflix_back.Application.Services;
 using netflix_back.Domain.Entities;
@@ -118,8 +119,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Middleware:
+app.UseMiddleware<ErrorHandlingMiddleware>();   // Captura global de errores (debe ser de los primeros).
+app.UseMiddleware<ResponseTimeMiddleware>();    // Muestra por terminal el tiempo de ejecucion del endpoint.
+app.UseMiddleware<LogRequestMiddleware>();      // Muestra que endpoint se esta usando.
+
 // 1. Siempre habilitar CORS al inicio para evitar "Failed to fetch"
-app.UseCors("DevCorsPolicy");
+// app.UseCors("DevCorsPolicy");
 
 // -------------------------------------------------------------------
 //deploy
@@ -135,13 +141,13 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local
 
 // -------------------------------------------------------------------
 // // Middlewares
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-//
-//     app.UseCors("DevCorsPolicy");
-// }
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
+    app.UseCors("DevCorsPolicy");
+}
 
 app.UseHttpsRedirection();
 
