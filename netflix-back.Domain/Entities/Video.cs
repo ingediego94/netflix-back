@@ -14,6 +14,4 @@ public class Video
     
     // Relations 1:1
     public Content Content { get; set; }
-    public Episode Episode { get; set; }
-
 }

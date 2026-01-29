@@ -15,8 +15,4 @@ public class Content
     // Relations:
     public Genre Genre { get; set; }
     public Video Video { get; set; }
-    
-    
-    // Inverse Relations:
-    public ICollection<SeriesSeason> SeriesSeasons { get; set; } = new List<SeriesSeason>();
 }
