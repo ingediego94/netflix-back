@@ -19,13 +19,19 @@ public class ContentRepository : IGeneralRepository<Content>
     // Get All Contents:
     public async Task<IEnumerable<Content>> GetAllAsync()
     {
-        return await _context.Contents.ToListAsync();
+        return await _context.Contents
+            .Include(c => c.Video)
+            .Include(c => c.Genre)
+            .ToListAsync();
     }
 
     // Get Content By Id:
     public async Task<Content?> GetByIdAsync(int id)
     {
-        return await _context.Contents.FindAsync(id);
+        return await _context.Contents
+            .Include(c => c.Video)
+            .Include(c => c.Genre)
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
     
 

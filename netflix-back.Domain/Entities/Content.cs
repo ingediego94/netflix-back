@@ -6,7 +6,7 @@ public class Content
 {
     public int Id { get; set; }
     public string Title { get; set; }
-    public int GenresId { get; set; }
+    public int GenreId { get; set; }
     public ContentType ContentType { get; set; }
     public int? VideoId { get; set; }
     public bool IsActive { get; set; }

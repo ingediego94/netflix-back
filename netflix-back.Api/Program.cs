@@ -41,7 +41,9 @@ builder.Services.AddScoped<IVideoService, VideoService>();
 builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
 builder.Services.AddScoped<IHistoryService, HistoryService>();
 
-
+// Contents - Videos:
+builder.Services.AddScoped<IGeneralRepository<Content>, ContentRepository>();
+builder.Services.AddScoped<IContentService, ContentService>();
 
 // ----------------------------------------------------------------
 
@@ -120,8 +122,8 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Middleware:
-app.UseMiddleware<ErrorHandlingMiddleware>();   // Captura global de errores (debe ser de los primeros).
-app.UseMiddleware<ResponseTimeMiddleware>();    // Muestra por terminal el tiempo de ejecucion del endpoint.
+// app.UseMiddleware<ErrorHandlingMiddleware>();   // Captura global de errores (debe ser de los primeros).
+// app.UseMiddleware<ResponseTimeMiddleware>();    // Muestra por terminal el tiempo de ejecucion del endpoint.
 app.UseMiddleware<LogRequestMiddleware>();      // Muestra que endpoint se esta usando.
 
 // 1. Siempre habilitar CORS al inicio para evitar "Failed to fetch"
