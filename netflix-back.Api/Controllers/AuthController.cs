@@ -35,12 +35,29 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto request)
     {
-        var result = await _authService.RegisterAsync(request);
+        
+        if (request == null)
+            return BadRequest("Los datos de registro son requeridos.");
+        try
+        {
+            var result = await _authService.RegisterAsync(request);
 
-        if (result == null)
-            return BadRequest("No se ha registrado el usuario.");
+            if (result == null)
+                return BadRequest(new {message = "No se ha podido registrar el usuario."});
 
-        return Ok(result);          // Debe devolver UserAuthResponseDto
+            return Ok(result);          // Debe devolver UserAuthResponseDto
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Capturamos el error de "Email duplicado" u otros de lógica de negocio
+            // Esto devolverá un Status 400 en lugar de un 500
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Ocurrió un error inesperado en el servidor.", details = ex.Message });
+        }
+
     }
     
     

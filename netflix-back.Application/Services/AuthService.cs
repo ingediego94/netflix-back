@@ -37,23 +37,39 @@ public class AuthService : IAuthService
     // REGISTER:
     public async Task<UserRegisterResponseDto> RegisterAsync(RegisterDto registerDto)
     {
-        if (registerDto == null)
-            throw new ArgumentNullException("Request body can't be null.");
-
-        var users = await _userRepository.GetAllAsync();
-        var exist = users.FirstOrDefault(user => user.Email == registerDto.Email);
         
-        if(exist != null) 
-            throw new ArgumentException($"User with email '{registerDto.Email}' already exists.");
+        if (registerDto == null)
+            throw new ArgumentNullException(nameof(registerDto), "Los datos registrados no pueden ser nulos.");
 
-        var user = _mapper.Map<User>(registerDto);
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
-        user.CreatedAt = DateTime.UtcNow;
-        user.UpdatedAt = DateTime.UtcNow;
+        if (string.IsNullOrWhiteSpace(registerDto.Email) || string.IsNullOrWhiteSpace(registerDto.Password))
+            throw new ArgumentException("El email y la contraseña son campos obligatorios.");
 
-        await _userRepository.CreateAsync(user);
+        try
+        {
+            var users = await _userRepository.GetAllAsync();
+            var exist = users.FirstOrDefault(user => user.Email.ToLower() == registerDto.Email.ToLower());
 
-        return _mapper.Map<UserRegisterResponseDto>(user);
+            if (exist != null)
+                throw new InvalidOperationException($"El email '{registerDto.Email}' ya se encuentra registrado.");
+
+            var user = _mapper.Map<User>(registerDto);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
+            user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.CreateAsync(user);
+
+            return _mapper.Map<UserRegisterResponseDto>(user);
+        }
+        catch (InvalidOperationException ex)
+        {
+            // We are capturing logic bussiness errors (as an duplied user)
+            throw new Exception(ex.Message);
+        }
+        catch(Exception ex)
+        {
+            throw new Exception("Error interno al procesar el registro del usuario. Por favor intente mas tarde.");
+        }
     }
     
     
