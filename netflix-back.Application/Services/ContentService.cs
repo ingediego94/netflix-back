@@ -40,6 +40,9 @@ public class ContentService : IContentService
 
     public async Task<ContentResponseDto> CreateAsync(ContentCreateDto dto)
     {
+        if (dto.VideoFile == null || dto.VideoFile.Length == 0)
+            throw new ArgumentException("El archivo de video es obligatorio para crear contenido.");
+        
         // 1. Subir Video y Foto a Cloudinary
         var videoRes = await _cloudinary.UploadAsync(new UploadVideoDto { Video = dto.VideoFile });
         if (videoRes == null) throw new Exception("Error al subir video.");
