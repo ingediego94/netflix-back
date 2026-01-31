@@ -77,14 +77,20 @@ public class AuthService : IAuthService
     // LOGIN:
     public async Task<UserAuthResponseDto> LoginAsync(LoginDto loginDto)
     {
+        if (loginDto == null || string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
+            throw new ArgumentException("Email y contraseña son requeridos.");
+        
         var users = await _userRepository.GetAllAsync();
-        var exists = users.FirstOrDefault(user => user.Email == loginDto.Email);
+        var user = users.FirstOrDefault(user => user.Email.ToLower() == loginDto.Email.ToLower());
 
-        if (exists == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, exists.PasswordHash))
-            throw new SecurityException("Incorrect credentials.");
+        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+            throw new UnauthorizedAccessException("Credenciales incorrectas.");
+        
+        if (!user.IsActive)
+            throw new InvalidOperationException("La cuenta de usuario está desactivada.");
         
         // Making the token + refresh and saves the refresh on DB.
-        return await GenerateTokensAsync(exists);
+        return await GenerateTokensAsync(user);
     }
 
 

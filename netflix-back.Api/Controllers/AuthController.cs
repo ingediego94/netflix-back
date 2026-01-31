@@ -22,12 +22,37 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto request)
     {
-        var result = await _authService.LoginAsync(request);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        try
+        {
+            var result = await _authService.LoginAsync(request);
 
-        if (result == null)
-            return Unauthorized("Credenciales incorrectas.");
+            if (result == null)
+                return Unauthorized(new { message = "No se pudo completar la autenticación." });
 
-        return Ok(result);          // Debe devolver UserAuthResponseDto
+            return Ok(result);          // Debe devolver UserAuthResponseDto
+        }
+        catch (ArgumentException ex)
+        {
+            // Error de datos de entrada (Faltan campos)
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            // Error de credenciales (Email o Password incorrectos) -> 401
+            return Unauthorized(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Errores de lógica (Usuario inactivo, etc.) -> 400
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Error no controlado -> 500
+            return StatusCode(500, new { message = "Error interno durante el inicio de sesión.", details = ex.Message });
+        }
+      
 
     }
     
