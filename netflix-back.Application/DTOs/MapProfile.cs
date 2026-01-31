@@ -31,6 +31,9 @@ public class MapProfile : Profile
         CreateMap<HistoryUpdateDto, History>();
         CreateMap<History, HistoryResponseDto>();
         
+        // Content:
+        CreateMap<Content, ContentResponseDto>()
+            .ForMember(dest => dest.GenreName, opt => opt.MapFrom(src => src.Genre.GenreName));
         
     }
 }

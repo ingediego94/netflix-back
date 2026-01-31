@@ -24,13 +24,11 @@ public class AppDbContext : DbContext
     // Tables:
     public DbSet<User> Users { get; set; }
     public DbSet<Content> Contents { get; set; }
-    public DbSet<Episode> Episodes { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<History> Histories { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
     public DbSet<Plan> Plans { get; set; }
-    public DbSet<SeriesSeason> SeriesSeasons { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<Video> Videos { get; set; }
 }
