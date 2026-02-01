@@ -50,7 +50,13 @@ public class UserService : IUserService
             return null;
 
         _mapper.Map(dto, user);
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        
+        // SEGURIDAD: Solo actualizar password si se proporciona uno nuevo
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        }
+
         user.UpdatedAt = DateTime.UtcNow;
 
         var updatedUser = await _userRepository.UpdateAsync(user);
@@ -60,12 +66,12 @@ public class UserService : IUserService
     // Delete:
     public async Task<bool> DeleteAsync(int id)
     {
-        var exists = await _userRepository.GetByIdAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
         
-        if(exists == null) 
+        if(user == null) 
             return false;
 
-        var toDelete = await _userRepository.DeleteAsync(exists);
+        var toDelete = await _userRepository.DeleteAsync(user);
         return true;
     }
 }

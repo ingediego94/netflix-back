@@ -39,12 +39,19 @@ public class HistoryService : IHistoryService
     // Create:
     public async Task<HistoryResponseDto> CreateOrUpdateAsync(HistoryCreateDto dto)
     {
-        // 1. Verificar si ya existe el registro
+        // 1. Validaciones de Negocio
+        if (dto.UserId <= 0 || dto.VideoId <= 0)
+            throw new ArgumentException("UserId y VideoId deben ser identificadores válidos.");
+
+        if (dto.Progress < 0)
+            throw new ArgumentException("El progreso del video no puede ser negativo.");
+
+        // 2. Verificar si ya existe el registro para este usuario y video
         var existingHistory = await _historyRepository.GetByUserAndVideoAsync(dto.UserId, dto.VideoId);
 
         if (existingHistory != null)
         {
-            // 2. Si existe, actualizamos el progreso y la fecha
+            // 3. Si existe, actualizamos el progreso y la fecha
             existingHistory.Progress = dto.Progress;
             existingHistory.UpdatedAt = DateTime.UtcNow; // MODIFICADO: Registro de actualización
 
@@ -52,7 +59,7 @@ public class HistoryService : IHistoryService
             return _mapper.Map<HistoryResponseDto>(updated);
         }
 
-        // 3. Si no existe, creamos uno nuevo
+        // 4. Si no existe, creamos uno nuevo
         var newHistory = _mapper.Map<History>(dto);
         newHistory.CreatedAt = DateTime.UtcNow;
         newHistory.UpdatedAt = DateTime.UtcNow;
