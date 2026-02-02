@@ -1,0 +1,59 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  # Especificamos el SDK de .NET 9 explícitamente
+  dotnetVersion: '9.x'
+
+steps:
+# 1. Instalar el SDK de .NET 9
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK $(dotnetVersion)'
+  inputs:
+    packageType: 'sdk'
+    version: $(dotnetVersion)
+
+# 2. Restaurar dependencias (NuGet)
+- task: DotNetCoreCLI@2
+  displayName: 'Restore Dependencies'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+
+# 3. Compilar la solución
+- task: DotNetCoreCLI@2
+  displayName: 'Build Solution ($(buildConfiguration))'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+# 4. Ejecutar Unit Tests
+# Si un test falla, el pipeline se detendrá aquí
+- task: DotNetCoreCLI@2
+  displayName: 'Run Unit Tests'
+  inputs:
+    command: 'test'
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+
+# 5. Publicar el proyecto (Prepara los archivos para el servidor)
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Application'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+
+# 6. Subir el artefacto a Azure Pipelines
+- task: PublishBuildArtifacts@1
+  displayName: 'Upload Artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'netflix-api'
+    publishLocation: 'Container'
