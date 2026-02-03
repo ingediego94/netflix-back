@@ -35,5 +35,7 @@ public class MapProfile : Profile
         CreateMap<Content, ContentResponseDto>()
             .ForMember(dest => dest.GenreName, opt => opt.MapFrom(src => src.Genre.GenreName));
         
+        // Genre:
+        CreateMap<Genre, GenreResponseDto>();
     }
 }
