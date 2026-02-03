@@ -1,10 +1,10 @@
 trigger:
 # nombre de la rama a evaluar
-- develop2
+- main
 
 pool:
 # Nombre del agente instalado en nuestra maquina local
-  name: 'agenteDiegoCasa'
+  name: 'agenteDVCasa'
 
 variables:
   buildConfiguration: 'Release'
