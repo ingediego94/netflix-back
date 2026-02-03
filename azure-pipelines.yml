@@ -4,7 +4,7 @@ trigger:
 
 pool:
 # Nombre del agente instalado en nuestra maquina local
-  name: 'Default'
+  name: 'agenteDVCasa'
 
 variables:
   buildConfiguration: 'Release'
