@@ -1,8 +1,10 @@
 trigger:
-- main
+# nombre de la rama a evaluar
+- develop2
 
 pool:
-  name: 'agenteDVRiwi'
+# Nombre del agente instalado en nuestra maquina local
+  name: 'Default'
 
 variables:
   buildConfiguration: 'Release'
