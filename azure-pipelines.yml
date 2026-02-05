@@ -12,14 +12,18 @@ variables:
   dotnetVersion: '9.x'
 
 steps:
-# 1. Instalar el SDK de .NET 9
+# 1. Configurar el repositorio con historial completo (Indispensable para SonarCloud)
+- checkout: self
+  fetchDepth: 0 # Trae todos los commits para que Sonar sepa quién causó cada warning
+
+# 2. Instalar el SDK de .NET 9
 - task: UseDotNet@2
   displayName: 'Install .NET SDK $(dotnetVersion)'
   inputs:
     packageType: 'sdk'
     version: $(dotnetVersion)
 
-# 2. Preparar el analisis de configuracion
+# 3. Preparar el analisis de configuracion
 - task: SonarCloudPrepare@4
   displayName: 'Prepare Analysis on SonarCloud'
   inputs:
@@ -29,14 +33,14 @@ steps:
     projectKey: 'ingediego94_test_1_pipeline'
     projectName: 'test_1_pipeline'
 
-# 3. Restaurar dependencias (NuGet)
+# 4. Restaurar dependencias (NuGet)
 - task: DotNetCoreCLI@2
   displayName: 'Restore Dependencies'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
 
-# 4. Compilar la solución
+# 5. Compilar la solución
 - task: DotNetCoreCLI@2
   displayName: 'Build Solution ($(buildConfiguration))'
   inputs:
@@ -44,19 +48,19 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
-# 5. Corre el SonarCloud
+# 6. Corre el SonarCloud
 - task: SonarCloudAnalyze@4
   displayName: 'Run Code Analysis'
   inputs:
     jdkversion: 'JAVA_HOME_17_X64'
 
-# 6. Publicar los resultados.
+# 7. Publicar los resultados.
 - task: SonarCloudPublish@4
   displayName: 'Publish Quality Gate Result'
   inputs:
     pollingTimeoutSec: '300'
 
-# 4. Ejecutar Unit Tests
+# 8. Ejecutar Unit Tests
 # Si un test falla, el pipeline se detendrá aquí
 - task: DotNetCoreCLI@2
   displayName: 'Run Unit Tests'
@@ -65,7 +69,7 @@ steps:
     projects: '**/*Tests/*.csproj'
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 
-# 5. Publicar el proyecto (Prepara los archivos para el servidor)
+# 9. Publicar el proyecto (Prepara los archivos para el servidor)
 - task: DotNetCoreCLI@2
   displayName: 'Publish Application'
   inputs:
@@ -74,7 +78,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: true
 
-# 6. Subir el artefacto a Azure Pipelines
+# 10. Subir el artefacto a Azure Pipelines
 - task: PublishBuildArtifacts@1
   displayName: 'Upload Artifacts'
   inputs:
