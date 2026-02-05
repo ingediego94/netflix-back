@@ -1,9 +1,9 @@
-trigger:
 # nombre de la rama a evaluar
+trigger:
 - main
 
+# Nombre del agente instalado en nuestra maquina local o vmImage: en la nube
 pool:
-# Nombre del agente instalado en nuestra maquina local
   name: 'agenteDVCasa'
 
 variables:
@@ -19,20 +19,42 @@ steps:
     packageType: 'sdk'
     version: $(dotnetVersion)
 
-# 2. Restaurar dependencias (NuGet)
+# 2. Preparar el analisis de configuracion
+- task: SonarCloudPrepare@4
+  displayName: 'Prepare Analysis on SonarCloud'
+  inputs:
+    SonarQube: 'SonarCloudConn'
+    organization: 'ingediego94'
+    scannerMode: 'dotnet'
+    projectKey: 'ingediego94_netflix-back'
+    projectName: 'netflix-back'
+
+# 3. Restaurar dependencias (NuGet)
 - task: DotNetCoreCLI@2
   displayName: 'Restore Dependencies'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
 
-# 3. Compilar la solución
+# 4. Compilar la solución
 - task: DotNetCoreCLI@2
   displayName: 'Build Solution ($(buildConfiguration))'
   inputs:
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
+
+# 5. Corre el SonarCloud
+- task: SonarCloudAnalyze@4
+  displayName: 'Run Code Analysis'
+  inputs:
+    jdkversion: 'JAVA_HOME_17_X64'
+
+# 6. Publicar los resultados.
+- task: SonarCloudPublish@4
+  displayName: 'Publish Quality Gate Result'
+  inputs:
+    pollingTimeoutSec: '300'
 
 # 4. Ejecutar Unit Tests
 # Si un test falla, el pipeline se detendrá aquí
