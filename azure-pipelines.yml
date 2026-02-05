@@ -26,8 +26,8 @@ steps:
     SonarQube: 'SonarCloudConn'
     organization: 'ingediego94'
     scannerMode: 'dotnet'
-    projectKey: 'ingediego94_netflix-back'
-    projectName: 'netflix-back'
+    projectKey: 'ingediego94_test_1_pipeline'
+    projectName: 'test_1_pipeline'
 
 # 3. Restaurar dependencias (NuGet)
 - task: DotNetCoreCLI@2
