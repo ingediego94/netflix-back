@@ -45,8 +45,12 @@ builder.Services.AddScoped<IHistoryService, HistoryService>();
 builder.Services.AddScoped<IGeneralRepository<Content>, ContentRepository>();
 builder.Services.AddScoped<IContentService, ContentService>();
 
-// ----------------------------------------------------------------
+// Genres:
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+builder.Services.AddScoped<IGenreService, GenreService>();
 
+// ----------------------------------------------------------------
+// prueba de pipeline Azure3
 // JWT
 builder.Services.AddAuthentication(options =>
     {
