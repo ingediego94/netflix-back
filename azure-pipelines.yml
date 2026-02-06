@@ -85,3 +85,13 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'netflix-api'
     publishLocation: 'Container'
+
+
+# 11. Desplegar a Azure App Service (CD)
+- task: AzureWebApp@1
+  displayName: 'Deploy Web API to Azure'
+  inputs:
+    azureSubscription: 'AzureConn' # El nombre que puso en el paso 3
+    appType: 'webAppLinux'
+    appName: 'api-netflix-diego'   # El nombre único que puso en el paso 2
+    package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
