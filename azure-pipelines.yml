@@ -33,6 +33,8 @@ steps:
     scannerMode: 'dotnet'
     projectKey: 'ingediego94_test_1_pipeline'
     projectName: 'test_1_pipeline'
+    extraProperties: |
+      sonar.pullrequest.disable=true
 
 # 4. Restaurar dependencias (NuGet)
 - task: DotNetCoreCLI@2
