@@ -1,6 +1,7 @@
 # nombre de la rama a evaluar
 trigger:
 - main
+- develop2
 
 # Nombre del agente instalado en nuestra maquina local o vmImage: en la nube
 pool:
@@ -27,7 +28,7 @@ steps:
 - task: SonarCloudPrepare@4
   displayName: 'Prepare Analysis on SonarCloud'
   inputs:
-    SonarQube: 'SonarCloudConn'
+    SonarCloud: 'SonarCloudConn'
     organization: 'ingediego94'
     scannerMode: 'dotnet'
     projectKey: 'ingediego94_test_1_pipeline'
@@ -90,6 +91,8 @@ steps:
 # 11. Desplegar a Azure App Service (CD)
 - task: AzureWebApp@1
   displayName: 'Deploy Web API to Azure'
+  # Solo se ejecuta si los pasos anteriores fueron exitosos Y si la rama es main
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
   inputs:
     azureSubscription: 'AzureConn' # El nombre que puso en el paso 3
     appType: 'webAppLinux'
