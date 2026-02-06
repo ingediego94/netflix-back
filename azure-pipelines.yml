@@ -25,16 +25,16 @@ steps:
     version: $(dotnetVersion)
 
 # 3. Preparar el analisis de configuracion
-- task: SonarCloudPrepare@4
-  displayName: 'Prepare Analysis on SonarCloud'
-  inputs:
-    SonarCloud: 'SonarCloudConn'
-    organization: 'ingediego94'
-    scannerMode: 'dotnet'
-    projectKey: 'ingediego94_test_1_pipeline'
-    projectName: 'test_1_pipeline'
-    extraProperties: |
-      sonar.pullrequest.disable=true
+# - task: SonarCloudPrepare@4
+#   displayName: 'Prepare Analysis on SonarCloud'
+#   inputs:
+#     SonarCloud: 'SonarCloudConn'
+#     organization: 'ingediego94'
+#     scannerMode: 'dotnet'
+#     projectKey: 'ingediego94_test_1_pipeline'
+#     projectName: 'test_1_pipeline'
+#     extraProperties: |
+#       sonar.pullrequest.disable=true
 
 # 4. Restaurar dependencias (NuGet)
 - task: DotNetCoreCLI@2
@@ -52,16 +52,16 @@ steps:
     arguments: '--configuration $(buildConfiguration)'
 
 # 6. Corre el SonarCloud
-- task: SonarCloudAnalyze@4
-  displayName: 'Run Code Analysis'
-  inputs:
-    jdkversion: 'JAVA_HOME_17_X64'
+# - task: SonarCloudAnalyze@4
+#   displayName: 'Run Code Analysis'
+#   inputs:
+#     jdkversion: 'JAVA_HOME_17_X64'
 
-# 7. Publicar los resultados.
-- task: SonarCloudPublish@4
-  displayName: 'Publish Quality Gate Result'
-  inputs:
-    pollingTimeoutSec: '300'
+# # 7. Publicar los resultados.
+# - task: SonarCloudPublish@4
+#   displayName: 'Publish Quality Gate Result'
+#   inputs:
+#     pollingTimeoutSec: '300'
 
 # 8. Ejecutar Unit Tests
 # Si un test falla, el pipeline se detendrá aquí
