@@ -50,7 +50,7 @@ builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 
 // ----------------------------------------------------------------
-// prueba de pipeline Azure2
+// prueba de pipeline Azure3
 // JWT
 builder.Services.AddAuthentication(options =>
     {
