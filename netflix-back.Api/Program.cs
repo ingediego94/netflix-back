@@ -135,25 +135,40 @@ app.UseMiddleware<LogRequestMiddleware>();      // Muestra que endpoint se esta 
 
 // -------------------------------------------------------------------
 //deploy
-if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Netflix API v1");
-        c.RoutePrefix = string.Empty;
-    });
-}
+// if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI(c =>
+//     {
+//         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Netflix API v1");
+//         c.RoutePrefix = string.Empty;
+//     });
+// }
+//
+// // -------------------------------------------------------------------
+// // // Middlewares
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+//
+//     app.UseCors("DevCorsPolicy");
+// }
 
-// -------------------------------------------------------------------
-// // Middlewares
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+// A. Middlewares de diagnóstico y logs (Ejecución temprana)
+app.UseMiddleware<LogRequestMiddleware>();
 
-    app.UseCors("DevCorsPolicy");
-}
+// B. Configuración de Swagger (Siempre activo para pruebas en Azure)
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Netflix API v1");
+    c.RoutePrefix = string.Empty; // Mapea Swagger a la raíz "/" para evitar el 404
+});
+
+// C. Seguridad y Rutas
+app.UseHttpsRedirection();
+app.UseCors("DevCorsPolicy"); // Habilitado globalmente para facilitar pruebas con Angular
 
 app.UseHttpsRedirection();
 
